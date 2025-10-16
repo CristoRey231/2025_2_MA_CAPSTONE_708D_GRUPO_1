@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Productos - Carnes Ttamiña</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <h1>Carnes Ttamiña</h1>
+    <ul>
+      <li><a href="pag_principal.html">Inicio</a></li>
+      <li><a href="menu.html" class="active">Base de Datos</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h2>Gestión de Productos</h2>
+
+    <!-- 🧾 FORMULARIO -->
+    <section id="formulario">
+      <h3>Agregar producto</h3>
+      <form id="formProducto" autocomplete="off">
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre del producto" required />
+        <!-- text + inputmode para que no se pierda el valor -->
+        <input type="text" id="precio" name="precio" placeholder="Precio ($)" inputmode="decimal" pattern="[0-9]+([.,][0-9]+)?" />
+        <input type="text" id="stock"  name="stock"  placeholder="Stock disponible" inputmode="decimal" pattern="[0-9]+([.,][0-9]+)?" />
+        <textarea id="descripcion" name="descripcion" placeholder="Descripción (opcional)"></textarea>
+        <button type="submit">Guardar</button>
+      </form>
+    </section>
+
+    <!-- 📋 LISTA DE PRODUCTOS -->
+    <section id="lista">
+      <h3>Lista de productos</h3>
+      <div id="productos">Cargando productos...</div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+    const SUPABASE_URL = 'https://bagilcaibwidyewiqqzd.supabase.co'
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhZ2lsY2FpYndpZHlld2lxcXpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwMjY3NDEsImV4cCI6MjA3NDYwMjc0MX0.VsVsH8c9fpjKxgmuNWYUCqE8e8DDcXicUELTexNJaAU'
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+    const form = document.getElementById('formProducto')
+    const contenedor = document.getElementById('productos')
+
+    // === Helpers lectura de precio/stock desde tablas reales ===
+    async function obtenerPrecio(producto_id) {
+      const { data, error } = await supabase
+        .from('lista_precio_detalle')
+        .select('precio, detalle_id')
+        .eq('producto_id', producto_id)
+        .limit(1).single()
+      if (error) return { precio: 0, detalle_id: null }
+      return { precio: data?.precio ?? 0, detalle_id: data?.detalle_id ?? null }
+    }
+
+    async function obtenerStock(producto_id) {
+      const { data, error } = await supabase
+        .from('stock')
+        .select('cantidad_disp, stock_id')
+        .eq('producto_id', producto_id)
+        .limit(1).single()
+      if (error) return { cantidad_disp: 0, stock_id: null }
+      return { cantidad_disp: data?.cantidad_disp ?? 0, stock_id: data?.stock_id ?? null }
+    }
+
+    // === Pintar productos ===
+    async function cargarProductos() {
+      const { data: productos, error } = await supabase
+        .from('producto')
+        .select('*')
+        .order('producto_id', { ascending: true })
+
+      if (error) {
+        contenedor.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`
+        return
+      }
+      if (!productos || productos.length === 0) {
+        contenedor.innerHTML = '<p>No hay productos registrados.</p>'
+        return
+      }
+
+      const productosConDatos = await Promise.all(
+        productos.map(async (p) => {
+          const { precio, detalle_id } = await obtenerPrecio(p.producto_id)
+          const { cantidad_disp, stock_id } = await obtenerStock(p.producto_id)
+          return { ...p, precio, stock: cantidad_disp, detalle_id, stock_id }
+        })
+      )
+
+      contenedor.innerHTML = productosConDatos.map(p => `
+        <div class="producto-item" id="prod-${p.producto_id}">
+          <strong>${p.nombre}</strong><br>
+          <small>ID: ${p.producto_id}</small><br>
+          <label>Precio ($):</label>
+          <input type="number" id="precio-${p.producto_id}" value="${p.precio}" step="0.01"><br>
+          <label>Stock:</label>
+          <input type="number" id="stock-${p.producto_id}" value="${p.stock}" step="0.001"><br>
+          <label>Descripción:</label><br>
+          <textarea id="desc-${p.producto_id}">${p.descripcion ?? ''}</textarea><br>
+          <button onclick="editarProducto(${p.producto_id}, ${p.detalle_id ?? 'null'}, ${p.stock_id ?? 'null'})">✏️ Guardar cambios</button>
+          <button onclick="eliminarProducto(${p.producto_id})" style="background-color:#b71c1c;">🗑️ Eliminar</button>
+        </div>
+      `).join('')
+    }
+
+    // === INSERT con FormData (lee siempre lo que hay en el form) ===
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+
+      const fd = new FormData(form)
+      const nombre = (fd.get('nombre') || '').toString().trim()
+      const descripcion = (fd.get('descripcion') || '').toString().trim() || null
+
+      // leer como texto y soportar coma decimal
+      const precioStr = ((fd.get('precio') || '') + '').trim()
+      const stockStr  = ((fd.get('stock')  || '') + '').trim()
+
+      // convertir de forma segura
+      const precio = precioStr === '' ? null : Number(precioStr.replace(',', '.'))
+      const stock  = stockStr  === '' ? null : Number(stockStr.replace(',', '.'))
+
+      if (!nombre) {
+        alert('Por favor, ingresa un nombre para el producto.')
+        return
+      }
+      if (precio !== null && isNaN(precio)) {
+        alert('⚠️ El valor de Precio no es válido.'); return
+      }
+      if (stock !== null && isNaN(stock)) {
+        alert('⚠️ El valor de Stock no es válido.'); return
+      }
+
+      // 1) producto
+      const { data: nuevoProd, error: errProd } = await supabase
+        .from('producto')
+        .insert([{ nombre, descripcion }])
+        .select('producto_id')
+        .single()
+
+      if (errProd) {
+        alert('❌ Error al guardar producto: ' + errProd.message)
+        console.error(errProd)
+        return
+      }
+      const producto_id = nuevoProd.producto_id
+
+      // 2) precio (si vino)
+      if (precio !== null) {
+        const { data: precioExist } = await supabase
+          .from('lista_precio_detalle')
+          .select('detalle_id')
+          .eq('lista_id', 1)
+          .eq('producto_id', producto_id)
+          .maybeSingle()
+
+        if (precioExist) {
+          await supabase.from('lista_precio_detalle')
+            .update({ precio })
+            .eq('detalle_id', precioExist.detalle_id)
+        } else {
+          await supabase.from('lista_precio_detalle')
+            .insert([{ lista_id: 1, producto_id, precio }])
+        }
+      }
+
+      // 3) stock (si vino)
+      if (stock !== null) {
+        const { data: stockExist } = await supabase
+          .from('stock')
+          .select('stock_id')
+          .eq('producto_id', producto_id)
+          .maybeSingle()
+
+        if (stockExist) {
+          await supabase.from('stock')
+            .update({ cantidad_disp: stock })
+            .eq('stock_id', stockExist.stock_id)
+        } else {
+          await supabase.from('stock')
+            .insert([{ producto_id, cantidad_disp: stock }])
+        }
+      }
+
+      alert('✅ Producto, precio y stock guardados correctamente.')
+      form.reset()
+      cargarProductos()
+    })
+
+    // === EDIT ===
+    window.editarProducto = async (id, detalle_id, stock_id) => {
+      const precio = parseFloat(document.getElementById(`precio-${id}`).value) || 0
+      const stock = parseFloat(document.getElementById(`stock-${id}`).value) || 0
+      const descripcion = document.getElementById(`desc-${id}`).value.trim() || null
+
+      const { error: errProd } = await supabase
+        .from('producto')
+        .update({ descripcion })
+        .eq('producto_id', id)
+      if (errProd) {
+        alert('❌ Error actualizando producto: ' + errProd.message)
+        return
+      }
+
+      if (detalle_id) {
+        await supabase.from('lista_precio_detalle').update({ precio }).eq('detalle_id', detalle_id)
+      } else {
+        await supabase.from('lista_precio_detalle').insert([{ lista_id: 1, producto_id: id, precio }])
+      }
+
+      if (stock_id) {
+        await supabase.from('stock').update({ cantidad_disp: stock }).eq('stock_id', stock_id)
+      } else {
+        await supabase.from('stock').insert([{ producto_id: id, cantidad_disp: stock }])
+      }
+
+      alert('✅ Cambios guardados correctamente.')
+      cargarProductos()
+    }
+
+    // === DELETE ===
+    window.eliminarProducto = async (id) => {
+      if (!confirm('¿Seguro que quieres eliminar este producto?')) return
+      const { error } = await supabase.from('producto').delete().eq('producto_id', id)
+      if (error) alert('❌ Error al eliminar: ' + error.message)
+      else {
+        alert('🗑️ Producto eliminado.')
+        cargarProductos()
+      }
+    }
+
+    cargarProductos()
+  </script>
+</body>
+</html>
+
+
+
