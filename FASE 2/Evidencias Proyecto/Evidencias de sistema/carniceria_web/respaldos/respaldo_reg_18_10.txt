@@ -1,0 +1,54 @@
+import { supabase } from './supabaseClient.js'
+
+// Formulario de registro
+const form = document.getElementById('registerForm')
+const mensaje = document.getElementById('mensaje')
+
+// Escuchar el submit del formulario
+form.addEventListener('submit', async (e) => {
+  e.preventDefault()
+
+  const nombre = document.getElementById('nombre').value.trim()
+  const apellido = document.getElementById('apellido').value.trim()
+  const rut = document.getElementById('rut').value.trim()
+  const email = document.getElementById('email').value.trim()
+  const password = document.getElementById('password').value.trim()
+  const confirmarPassword = document.getElementById('confirmarPassword').value.trim()
+
+  if (password !== confirmarPassword) {
+    mensaje.textContent = 'Las contraseñas no coinciden.'
+    return
+  }
+
+  // Crear un nuevo usuario con Supabase
+  const { data: userData, error: userError } = await supabase.auth.signUp({
+    email,
+    password,
+  })
+
+  if (userError) {
+    mensaje.textContent = 'Error al registrar: ' + userError.message
+    console.error(userError)
+    return
+  }
+
+  // Crear el usuario en la base de datos (tabla 'usuario')
+  const { error: insertError } = await supabase.from('usuario').insert([{
+    email,
+    nombre,
+    cliente_id: null, 
+    hash_password: password, 
+    activo: true,
+    auth_user_id: userData.user.id,
+    rol_id: 1 // agrega la cuenta a cliente 
+  }])
+
+  if (insertError) {
+    mensaje.textContent = 'Error al guardar el usuario: ' + insertError.message
+    console.error(insertError)
+    return
+  }
+
+  alert('¡Registro exitoso! Ahora puedes iniciar sesión.')
+  window.location.href = 'login.html'
+})

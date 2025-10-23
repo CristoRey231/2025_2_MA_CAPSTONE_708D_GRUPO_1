@@ -1,0 +1,53 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const userDropdown = document.querySelector(".dropdown");
+  const submenu = document.querySelector(".dropdown-menu");
+
+if (userDropdown && submenu) {
+  userDropdown.querySelector("a").addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    submenu.classList.toggle("show");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!submenu.contains(e.target) && !userDropdown.contains(e.target)) {
+      submenu.classList.remove("show");
+    }
+  });
+
+  submenu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      submenu.classList.remove("show"); // opcional: cerrar después de hacer clic
+    });
+  });
+}
+
+});
+;
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    const baseDatosLink = document.querySelector('a[href="menu.html"]');
+
+    if (!baseDatosLink) return; 
+
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const rol = localStorage.getItem("rol");
+
+    // Si no hay usuario logueado
+    if (!usuario) {
+      baseDatosLink.style.display = "none";
+      return;
+    }
+
+    // Si el rol es cliente (1)
+    if (rol === "1") {
+      baseDatosLink.style.display = "none";
+      return;
+    }
+
+    // Si es empleado (2) o admin (3)
+    if (rol === "2" || rol === "3") {
+      baseDatosLink.style.display = "inline-block";
+    }
+  }, 200); // espera 200ms por si el DOM se retrasa
+});

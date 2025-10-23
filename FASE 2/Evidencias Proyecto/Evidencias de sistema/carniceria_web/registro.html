@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crear cuenta - Carnes Ttamiña</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="carnesStilos.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script type="module" src="js/reg.js"></script>
+  <script type="module" src="js/navbar.js"></script>
+
+</head>
+<body>
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="navbar-container">
+
+    <!-- LOGO + barra de búsqueda -->
+    <div class="navbar-left">
+      <h1 class="navbar-logo">Carnes Ttamiña</h1>
+      <div class="navbar-search">
+        <input type="text" placeholder="Busca aquí tus productos..." />
+        <button><i class="fa fa-search"></i></button>
+      </div>
+    </div>
+
+    <!-- MENÚ DE NAVEGACIÓN -->
+    <nav class="navbar-right">
+      <ul>
+        <li><a href="pag_principal.html"><i class="fa fa-home"></i> Inicio</a></li>
+
+        <li class="dropdown align-right">
+          <a href="#"><i class="fa fa-user"></i> Bienvenido</a>
+          <ul class="dropdown-menu">
+            <li><a href="#"><i class="fa fa-id-card"></i> Mi cuenta</a></li>
+            <li><a href="login.html"><i class="fa fa-sign-in-alt"></i> Iniciar sesión</a></li>
+            <li class="no-cuenta">¿No tienes cuenta?
+              <a href="registro.html" class="crear-cuenta">Créala aquí</a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Menú Categorías -->
+        <li class="dropdown">
+          <a href="#"><i class="fa fa-cut"></i> Categorías <i class="fa fa-caret-down"></i></a>
+          <ul class="dropdown-menu">
+            <li><a href="vacuno.html">Vacuno</a></li>
+            <li><a href="ave.html">Ave</a></li>
+            <li><a href="cerdo.html">Cerdo</a></li>
+            <li><a href="todo_asado.html">Todo para el asado</a></li>
+            <li><a href="packs.html">Packs</a></li>
+          </ul>
+        </li>
+
+        <!-- Carrito (debe estar dentro del UL) -->
+        <li class="cart-icon">
+          <a href="carrito.html">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+  <div class="login-container">
+    <div class="left-column">
+      <h2>¡Bienvenido!</h2>
+      <p>Introduce la siguiente información para crear tu cuenta.</p>
+    </div>
+    <div class="right-column">
+      <h2>Crear cuenta</h2>
+      <form id="registerForm">
+        <input type="text" id="nombre" placeholder="Nombre Completo" required />
+        <input type="text" id="rut" placeholder="Rut" required />
+        <input type="email" id="email" placeholder="Correo electrónico" required />
+        <input type="password" id="password" placeholder="Contraseña" required />
+        <input type="password" id="confirmarPassword" placeholder="Confirmar contraseña" required />
+        <button type="submit">Registrarse</button>
+      </form>
+      <p id="mensaje" style="color:red;"></p>
+      <p><a href="login.html">¿Ya estás registrado? Iniciar sesión</a></p>
+    </div>
+  </div>
+  <footer class="footer">
+  <div class="footer-section">
+    <h4>Categorías</h4>
+    <ul>
+      <li>Vacuno</li>
+      <li>Ave</li>
+      <li>Cerdo</li>
+      <li>Misceláneos</li>
+      <li>Packs</li>
+    </ul>
+  </div>
+
+  <div class="footer-section">
+    <h4>Servicio al cliente</h4>
+    <ul>
+      <li>Términos y condiciones</li>
+      <li>Contáctanos</li>
+      <li>Quiénes somos</li>
+    </ul>
+  </div>
+
+  <div class="footer-section">
+    <h4>Horarios</h4>
+    <p>Lunes a sábado: 09:00 a 18:00 hrs</p>
+  </div>
+
+  <div class="footer-section">
+    <h4>Métodos de pago</h4>
+    <img src="img/logo-web-pay-plus.png" alt="WebPay Plus" width="100">
+  </div>
+</footer>
+</body>
+</html>

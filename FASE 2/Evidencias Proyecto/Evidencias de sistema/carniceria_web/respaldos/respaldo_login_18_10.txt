@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar sesión - Carnes Ttamiña</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/footer.css">
+</head>
+<body>
+<header class="navbar">
+  <div class="navbar-container">
+    <!-- LOGO + BÚSQUEDA -->
+    <div class="navbar-left">
+      <h1 class="navbar-logo">Carnes Ttamiña</h1>
+      <div class="navbar-search">
+        <input type="text" placeholder="Busca aquí tus productos..." />
+        <button><i class="fa fa-search"></i></button>
+      </div>
+    </div>
+
+    <!-- MENÚ DE NAVEGACIÓN -->
+    <nav class="navbar-right">
+      <ul>
+        <li><a href="pag_principal.html"><i class="fa fa-home"></i> Inicio</a></li>
+        <li><a href="menu.html" style="display: none;"><i class="fa fa-database"></i> Base de Datos</a></li>
+
+
+        <li class="dropdown">
+          <a href="#"><i class="fa fa-user"></i> Bienvenido</a>
+          <ul class="dropdown-menu">
+            <li><a href="#"><i class="fa fa-id-card"></i> Mi cuenta</a></li>
+            <li><a href="login.html"><i class="fa fa-sign-in-alt"></i> Iniciar sesión</a></li>
+            <li class="no-cuenta">¿No tienes cuenta?
+              <a href="registro.html" class="crear-cuenta">Créala aquí</a>
+            </li>
+          </ul>
+        </li>
+
+        <li><a href="#"><i class="fa fa-shopping-cart"></i> Carrito</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+  <!-- Formulario Login -->
+  <div class="login-container">
+    <div class="left-column">
+      <h2>¡Bienvenido de nuevo!</h2>
+      <p class="info-text">Para acceder a tu cuenta, ingresa tus datos.</p>
+    </div>
+    <div class="right-column">
+      <h2>Iniciar sesión</h2>
+      <form id="loginForm">
+        <input type="email" id="email" placeholder="Correo electrónico" required />
+        <input type="password" id="password" placeholder="Contraseña" required />
+        <button type="submit">Ingresar</button>
+      </form>
+      <p id="mensaje" style="color:red;"></p>
+      <button class="register-btn" onclick="window.location.href='registro.html'">Crear cuenta</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <div class="footer-container">
+      <div class="footer-section">
+        <h3>Categorías</h3>
+        <ul>
+          <li><a href="#">Vacuno</a></li>
+          <li><a href="#">Ave</a></li>
+          <li><a href="#">Cerdo</a></li>
+          <li><a href="#">Misceláneos</a></li>
+          <li><a href="#">Mariscos</a></li>
+          <li><a href="#">Packs</a></li>
+          <li><a href="#">Calcula tu asado</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Servicio al cliente</h3>
+        <ul>
+          <li><a href="#">Términos y condiciones</a></li>
+          <li><a href="#">Contáctanos</a></li>
+          <li><a href="#">Quiénes somos</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Horarios</h3>
+        <p>Horarios pedidos vía whatsapp</p>
+        <p>Lunes a sábado: 09:00 hrs a 18:00 hrs</p>
+      </div>
+      <div class="footer-section">
+        <h3>Métodos de pago</h3>
+        <img src="img/logo-web-pay-plus.png" alt="WebPay" />
+        <p>VISA, MasterCard, Redcompra, PSE, Transbank</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module"defer src="js/auth.js"></script>
+  <script type="module"defer src="js/navbar.js"></script>
+</body>
+</html>

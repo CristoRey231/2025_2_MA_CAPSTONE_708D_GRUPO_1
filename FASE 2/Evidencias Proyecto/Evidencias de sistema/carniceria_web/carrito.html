@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tu Carrito - Carnes Ttamiña</title>
+  <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script type="module" src="js/navbar.js"></script>
+<link rel="stylesheet" href="css/footer.css">
+</head>
+
+<body>
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="navbar-container">
+
+    <!-- LOGO + barra de búsqueda -->
+    <div class="navbar-left">
+      <h1 class="navbar-logo">Carnes Ttamiña</h1>
+      <div class="navbar-search">
+        <input type="text" placeholder="Busca aquí tus productos..." />
+        <button><i class="fa fa-search"></i></button>
+      </div>
+    </div>
+
+    <!-- MENÚ DE NAVEGACIÓN -->
+    <nav class="navbar-right">
+      <ul>
+        <li><a href="pag_principal.html"><i class="fa fa-home"></i> Inicio</a></li>
+
+        <li class="dropdown align-right">
+          <a href="#"><i class="fa fa-user"></i> Bienvenido</a>
+          <ul class="dropdown-menu">
+            <li><a href="#"><i class="fa fa-id-card"></i> Mi cuenta</a></li>
+            <li><a href="login.html"><i class="fa fa-sign-in-alt"></i> Iniciar sesión</a></li>
+            <li class="no-cuenta">¿No tienes cuenta?
+              <a href="registro.html" class="crear-cuenta">Créala aquí</a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Menú Categorías -->
+        <li class="dropdown">
+          <a href="#"><i class="fa fa-cut"></i> Categorías <i class="fa fa-caret-down"></i></a>
+          <ul class="dropdown-menu">
+            <li><a href="vacuno.html">Vacuno</a></li>
+            <li><a href="ave.html">Ave</a></li>
+            <li><a href="cerdo.html">Cerdo</a></li>
+            <li><a href="todo_asado.html">Todo para el asado</a></li>
+            <li><a href="packs.html">Packs</a></li>
+          </ul>
+        </li>
+
+        <!-- Carrito (debe estar dentro del UL) -->
+        <li class="cart-icon">
+          <a href="carrito.html">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+ <table class="tabla-carrito">
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio</th>
+      <th>Subtotal</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody class="carrito-body"></tbody>
+</table>
+
+<h3>Total: <span id="total">$0</span></h3>
+<button id="vaciarCarrito">Vaciar carrito</button>
+<a id="volverTienda" href="pag_principal.html" style="text-decoration:none; display:inline-block; padding:10px 12px; border-radius:8px; background:#b71c1c; color:#fff; font-weight:600;">
+  ← Volver a la tienda
+</a>
+
+
+<footer class="footer">
+  <div class="footer-section">
+    <h4>Categorías</h4>
+    <ul>
+      <li>Vacuno</li>
+      <li>Ave</li>
+      <li>Cerdo</li>
+      <li>Misceláneos</li>
+      <li>Packs</li>
+    </ul>
+  </div>
+
+  <div class="footer-section">
+    <h4>Servicio al cliente</h4>
+    <ul>
+      <li>Términos y condiciones</li>
+      <li>Contáctanos</li>
+      <li>Quiénes somos</li>
+    </ul>
+  </div>
+
+  <div class="footer-section">
+    <h4>Horarios</h4>
+    <p>Lunes a sábado: 09:00 a 18:00 hrs</p>
+  </div>
+
+  <div class="footer-section">
+    <h4>Métodos de pago</h4>
+    <img src="img/logo-web-pay-plus.png" alt="WebPay Plus" width="100">
+  </div>
+</footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/navbar.js"></script>
+</body>
+</html>
+  <script type="module">
+  import { actualizarContadorCarrito } from './js/carritoglobal.js'
+
+  document.addEventListener('DOMContentLoaded', () => {
+    mostrarCarrito();
+    actualizarContadorCarrito();
+  });
+
+  function mostrarCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const contenedor = document.querySelector('.carrito-body');
+    const totalElem = document.getElementById('total');
+
+    contenedor.innerHTML = '';
+
+    if (carrito.length === 0) {
+      contenedor.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align:center; padding:20px;">
+            🛒 Tu carrito está vacío.
+          </td>
+        </tr>`;
+      totalElem.textContent = '$0';
+      return;
+    }
+
+    let total = 0;
+    carrito.forEach((item, i) => {
+      const subtotal = item.precio * item.cantidad;
+      total += subtotal;
+
+      const fila = document.createElement('tr');
+      fila.innerHTML = `
+        <td>${item.nombre}</td>
+        <td>
+          <input type="number" value="${item.cantidad}" min="1" 
+                 data-index="${i}" class="input-cantidad" style="width:60px;">
+        </td>
+        <td>${item.precio.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</td>
+        <td>${subtotal.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</td>
+        <td><button class="btn-eliminar" data-index="${i}">🗑️</button></td>
+      `;
+      contenedor.appendChild(fila);
+    });
+
+    totalElem.textContent = total.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
+
+    document.querySelectorAll('.input-cantidad').forEach(input => {
+      input.addEventListener('change', actualizarCantidad);
+    });
+
+    document.querySelectorAll('.btn-eliminar').forEach(btn => {
+      btn.addEventListener('click', eliminarProducto);
+    });
+  }
+
+  function actualizarCantidad(e) {
+    const index = e.target.dataset.index;
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    carrito[index].cantidad = parseInt(e.target.value) || 1;
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    mostrarCarrito();
+  }
+
+  function eliminarProducto(e) {
+    const index = e.target.dataset.index;
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    carrito.splice(index, 1);
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    mostrarCarrito();
+  }
+
+  document.getElementById('vaciarCarrito').addEventListener('click', () => {
+    localStorage.removeItem('carrito');
+    mostrarCarrito();
+  });
+</script>
+
+
+

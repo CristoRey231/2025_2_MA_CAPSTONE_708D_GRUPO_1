@@ -1,0 +1,197 @@
+/* === CONTENEDOR GENERAL === */
+.catalogo-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* === FILTROS Y BUSQUEDA === */
+.filtros-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.busqueda-vacuno input {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 250px;
+}
+
+.filtro-orden {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  cursor: pointer;
+}
+
+/* === GRID DE PRODUCTOS === */
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  justify-content: center;
+  padding: 10px;
+}
+
+/* === TARJETAS DE PRODUCTOS === */
+.producto-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.producto-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* === IMAGEN === */
+.producto-imagen {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background-color: #f8f8f8;
+}
+
+/* === NOMBRE === */
+.producto-nombre {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #8b0000;
+  margin: 10px 0 4px 0;
+}
+
+/* === DESCRIPCIÓN === */
+.producto-descripcion {
+  font-size: 0.95rem;
+  color: #555;
+  padding: 0 10px;
+  min-height: 40px;
+}
+
+/* === PRECIO === */
+.producto-precio {
+  font-size: 1.3rem;
+  color: #222;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.producto-unidad {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* === STOCK === */
+.producto-stock {
+  color: #28a745;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+.producto-agotado {
+  color: #c0392b;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+/* === BOTÓN AGREGAR === */
+.btn-agregar {
+  margin: 12px auto 16px auto;
+  background-color: #b71c1c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-agregar:hover {
+  background-color: #8b0000;
+}
+
+.btn-agregar:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* === MENSAJE SIN PRODUCTOS === */
+.sin-productos {
+  text-align: center;
+  padding: 50px;
+  color: #666;
+}
+
+.sin-productos i {
+  font-size: 2rem;
+  color: #b71c1c;
+}
+
+/* === SKELETON LOADER === */
+.skeleton-loader {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  justify-content: center;
+  padding: 10px;
+}
+
+.skeleton-card {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-image,
+.skeleton-text,
+.skeleton-button {
+  background: linear-gradient(90deg, #f0f0f0 25%, #eaeaea 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 180px;
+}
+
+.skeleton-text {
+  height: 16px;
+  width: 80%;
+  margin: 10px auto;
+}
+
+.skeleton-text.short {
+  width: 50%;
+}
+
+.skeleton-button {
+  width: 60%;
+  height: 36px;
+  margin: 12px auto;
+  border-radius: 8px;
+}
+
+@keyframes pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
